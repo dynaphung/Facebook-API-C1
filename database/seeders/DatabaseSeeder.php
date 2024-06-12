@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,13 +13,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-        // \App\Models\Post::factory(50)->create();
-        // \App\Models\Like::factory(100)->create();
+        Model::unguard();
+        if ($this->isLocal()) {
+            Schema::disableForeignKeyConstraints();
+            $this->call(RoleAndPermissionSeeder::class);
+            $this->call(UserSeeder::class);
+            Schema::enableForeignKeyConstraints();
+        } else {
+            $this->call(DefaultUsersSeeder::class);
+        }
+        Model::reguard();
+    }
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+    private function isLocal(): bool
+    {
+        return app()->environment('local');
     }
 }
