@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
@@ -45,4 +46,13 @@ class LikeController extends Controller
     {
         //
     }
+
+
+    public function showLikesBy($post_id)
+    {
+        $likes = Post::find($post_id)->likes;
+        return response()->json(['message' => 'Get likes by user are successfully.', 'data' => $likes]);
+    }
+
+
 }

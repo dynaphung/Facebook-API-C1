@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -41,9 +44,10 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $id)
+    public function show($id)
     {
         $post = Post::find($id);
+        $post = new PostResource($post);
         if ($post) {
             return response()->json(['message' => 'Get post is successfully.', 'data' => $post]);
         } else {
@@ -58,14 +62,30 @@ class PostController extends Controller
         return response()->json(['message' => 'Get posts by user are successfully.', 'data' => $posts]);
     }
 
-    public function update(Request $request, Post $post)
+    public function showLikesBy($user_id){
+        $likes = User::find($user_id)->likes;
+        return response()->json(['message' => 'Get likes by user are successfully.', 'data' => $likes]);
+    }
+
+    public function update(Request $request, $id)
     {
-        $post->update([
-            'title' => $request('title'),
-            'description' => $request('description'),
-            'user_id' => $post->id
+
+        $request->validate([
+            "title" => "required",
+            "content" => "required",
         ]);
-        return response()->json(['message' => 'Update post is successfully.', 'data' => $post]);
+        $post = Post::find($id);
+
+        if($post){
+            $post->title = $request->title;
+            $post->content = $request->content;
+            $post->update();
+
+            return response()->json(['message' => 'Update post is successfully.', 'data' => $post]);
+        }
+        else{
+            return response()->json(['message' => 'Post id does not exist.'],404);
+        }
     }
 
     /**
@@ -80,5 +100,23 @@ class PostController extends Controller
         } else {
             return response()->json(['message' => 'Post id does not exist.']);
         }
+    }
+
+    public function addLike(Request $request){
+        $request->validate([
+            'post_id' =>'required',
+        ]);
+
+        $liked = Like::where('post_id', $request->post_id)->where('user_id', Auth()->user()->id)->first();
+        if($liked){
+            $liked->delete();
+            return response()->json(['message' => 'Unliked.']);
+        }
+
+        Like::create([
+            'user_id' => Auth()->user()->id,
+            'post_id' => $request->post_id,
+        ]);
+        return response()->json(['message' => 'Like post is successfully.']);
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/add/post', [PostController::class, 'addPost']);
 
-    Route::get('/list/post', [PostController::class, 'index']);
+    Route::get('/get/post', [PostController::class, 'index']);
 
     Route::get('/show/post/{id}', [PostController::class, 'show']);
 
@@ -42,5 +44,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('posts/users/{user_id}', [PostController::class, 'showPostsBy']);
 
     
-    // Route::get('likes/posts/{post_id}', [LikeController::class, 'showLikesBy']);
+    //================================== Comment =========================================
+    Route::post('/add/comment', [CommentController::class, 'store']);
+    Route::get('/get/comment', [CommentController::class, 'index']);
+    Route::put('/update/comment/{id}', [CommentController::class, 'update']);
+    Route::delete('/delete/comment/{id}', [CommentController::class, 'destroy']);
+
+    Route::get('likes/posts/{post_id}', [LikeController::class, 'showLikesBy']);
+
+
+    Route::post('/add/like', [PostController::class, 'addLike']);
 });
