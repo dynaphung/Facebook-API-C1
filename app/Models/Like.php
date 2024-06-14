@@ -13,4 +13,8 @@ class Like extends Model
         'post_id',
         'user_id',
     ];
+
+    public function getPost(){
+        return $this->belongsTo(Post::class, 'post_id');
+    }
 }
