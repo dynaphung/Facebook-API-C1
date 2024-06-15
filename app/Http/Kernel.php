@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
             ThrottleRequests::class.':api',
             SubstituteBindings::class,
         ],
+    
     ];
 
     /**

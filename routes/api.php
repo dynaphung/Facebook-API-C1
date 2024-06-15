@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\FriendShipController;
 use App\Http\Controllers\PostController;
+use App\Models\FriendRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,3 +47,14 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Route::get('likes/posts/{post_id}', [LikeController::class, 'showLikesBy']);
 });
+
+// Route::middleware('auth:api')->prefix('friendShip')->group(function () {
+//     Route::post('/request', [FriendShipController::class, 'sendRequest']);
+//     Route::post('/accept/{id}', [FriendShipController::class, 'acceptRequest']);
+//     Route::post('/decline/{id}', [FriendShipController::class, 'declineRequest']);
+//     Route::delete('/delete/{user_id}/{user_request_id}', [FriendShipController::class, 'deleteFriend']);
+// });
+Route::post('send-friend-request', [FriendRequestController::class, 'sendRequest']);
+Route::post('respond-to-request', [FriendRequestController::class, 'respondToRequest']);
+Route::get('friends-list', [FriendShipController::class, 'friendsList']);
+Route::delete('remove-friend/{id}', [FriendShipController::class, 'removeFriend']);
