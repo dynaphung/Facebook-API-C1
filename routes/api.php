@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
+<<<<<<< HEAD
 
 Route::post('/forgot-password', [AuthController::class, 'sendEmailVerify']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
@@ -36,15 +38,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=================================== Post ======================================
 
+=======
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); 
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Route::post('/logout', [AuthController::class, 'logout']); 
+>>>>>>> origin/master
     Route::post('/add/post', [PostController::class, 'addPost']);
 
     Route::get('/get/post', [PostController::class, 'index']);
 
+    Route::get('/list/post', [PostController::class, 'index']);
     Route::get('/show/post/{id}', [PostController::class, 'show']);
-
     Route::put('update/post/{id}', [PostController::class, 'update']);
-
     Route::delete('delete/post/{id}', [PostController::class, 'destroy']);
+<<<<<<< HEAD
+=======
+    Route::get('posts/users/{user_id}', [PostController::class, 'showPostsBy']);
+>>>>>>> origin/master
 
 
     //================================== Comment =========================================
@@ -64,4 +76,12 @@ Route::middleware('auth:sanctum')->group(function () {
     //=================================== Profile ===============================================
     Route::put('/me/update', [UserController::class, 'updateProfile']);
     Route::post('/me/profile-picture', [UserController::class, 'uploadProfilePicture']);
+});
+
+// Friend routes
+Route::middleware('auth:sanctum')->prefix('friends')->group(function () {
+    Route::post('/request', [FriendController::class, 'sendRequest']);
+    Route::post('/accept/{id}', [FriendController::class, 'acceptRequest']);
+    Route::post('/reject/{id}', [FriendController::class, 'rejectRequest']);
+    Route::get('/list', [FriendController::class, 'viewFriends']);
 });

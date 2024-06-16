@@ -8,8 +8,12 @@
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
+<<<<<<< HEAD
         "laravel/sanctum": "*",
         "laravel/socialite": "^5.14",
+=======
+        "laravel/sanctum": "^3.3",
+>>>>>>> origin/master
         "laravel/tinker": "^2.8",
         "spatie/laravel-permission": "^6.7"
     },

@@ -67,8 +67,9 @@ class Kernel extends HttpKernel
             ThrottleRequests::class.':api',
             SubstituteBindings::class,
         ],
+    
     ];
-
+  
     /**
      * The application's middleware aliases.
      *
