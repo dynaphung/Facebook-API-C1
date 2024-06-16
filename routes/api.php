@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,25 +23,19 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
-
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); 
 
 
 Route::middleware('auth:sanctum')->group(function () {
-
-    Route::post('/logout', [AuthController::class, 'logout']); 
-
-    // Route::resource('posts', PostController::class);
-
+    // Route::post('/logout', [AuthController::class, 'logout']); 
     Route::post('/add/post', [PostController::class, 'addPost']);
 
     Route::get('/get/post', [PostController::class, 'index']);
 
+    Route::get('/list/post', [PostController::class, 'index']);
     Route::get('/show/post/{id}', [PostController::class, 'show']);
-
     Route::put('update/post/{id}', [PostController::class, 'update']);
-
     Route::delete('delete/post/{id}', [PostController::class, 'destroy']);
-    
     Route::get('posts/users/{user_id}', [PostController::class, 'showPostsBy']);
 
     
@@ -54,4 +49,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('/add/like', [PostController::class, 'addLike']);
+});
+
+// Friend routes
+Route::middleware('auth:sanctum')->prefix('friends')->group(function () {
+    Route::post('/request', [FriendController::class, 'sendRequest']);
+    Route::post('/accept/{id}', [FriendController::class, 'acceptRequest']);
+    Route::post('/reject/{id}', [FriendController::class, 'rejectRequest']);
+    Route::get('/list', [FriendController::class, 'viewFriends']);
 });
