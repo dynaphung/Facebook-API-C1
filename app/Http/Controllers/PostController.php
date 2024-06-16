@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LikeResource;
 use App\Http\Resources\PostResource;
 use App\Models\Like;
 use App\Models\Post;
@@ -56,16 +57,23 @@ class PostController extends Controller
     }
 
 
-    public function showPostsBy($user_id)
+    public function showLikesBy($post_id)
     {
-        $posts = User::find($user_id)->posts;
-        return response()->json(['message' => 'Get posts by user are successfully.', 'data' => $posts]);
+        // Eager load 'likes' and 'user' relationship
+        $post = Post::with('likes.user')->find($post_id);
+
+        // Check if post with the given ID exists
+        if (!$post) {
+            return response()->json(['message' => 'Post not found.'], 404);
+        }
+
+        // Retrieve the likes associated with the post
+        $likes = LikeResource::collection($post->likes);
+
+        // Return response
+        return response()->json(['message' => 'Likes retrieved successfully.', 'data' => $likes]);
     }
 
-    public function showLikesBy($user_id){
-        $likes = User::find($user_id)->likes;
-        return response()->json(['message' => 'Get likes by user are successfully.', 'data' => $likes]);
-    }
 
     public function update(Request $request, $id)
     {
@@ -76,15 +84,14 @@ class PostController extends Controller
         ]);
         $post = Post::find($id);
 
-        if($post){
+        if ($post) {
             $post->title = $request->title;
             $post->content = $request->content;
             $post->update();
 
             return response()->json(['message' => 'Update post is successfully.', 'data' => $post]);
-        }
-        else{
-            return response()->json(['message' => 'Post id does not exist.'],404);
+        } else {
+            return response()->json(['message' => 'Post id does not exist.'], 404);
         }
     }
 
@@ -102,13 +109,14 @@ class PostController extends Controller
         }
     }
 
-    public function addLike(Request $request){
+    public function addLike(Request $request)
+    {
         $request->validate([
-            'post_id' =>'required',
+            'post_id' => 'required',
         ]);
 
         $liked = Like::where('post_id', $request->post_id)->where('user_id', Auth()->user()->id)->first();
-        if($liked){
+        if ($liked) {
             $liked->delete();
             return response()->json(['message' => 'Unliked.']);
         }
