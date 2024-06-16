@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 
 class AuthController extends Controller
@@ -83,21 +84,50 @@ class AuthController extends Controller
         return response()->json(['error' => 'User not found!.'], 200);
     }
 
-    public function resetPassword(Request $request){
+    public function sendEmailVerify(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = DB::table('users')->where('email', '=', $request->email)->first();
+
+        if ($user) {
+            $passcord = Str::random(8);
+
+            DB::table('reset_passwords')->insert([
+                'email' => $request->email,
+                'passcord' => $passcord,
+            ]);
+
+            return response()->json(['message' => 'Password reset email sent successfully', 'passcord' => $passcord]);
+        } else {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
         $resetData = DB::table('reset_passwords')
-        ->where('passcode',$request->passcode)
-        ->first();
-        if(!$resetData){
-            return response()->json(['error' => 'Invalid passcode!.'], 200);
+            ->where('email', $request->email)
+            ->where('passcord', $request->passcord)
+            ->first();
+
+        if (!$resetData) {
+            return response()->json(['message' => 'Reset password link is invalid'], 404);
         }
 
-        $user = User::where('email',$resetData->email)->first();
-        if(!$user){
-            return response()->json(['error' => 'User not found!.'], 200);
+        $user = User::where('email', $resetData->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
         }
-        $user->password =  Hash::make($request->password);
+
+        $user->password = Hash::make($request->password);
         $user->save();
-        DB::table('reset_password')->where('passcode',$request->passcode)->delete();
-        return response()->json(['message' => 'Password reset successfully.'], 200);
+
+        DB::table('reset_passwords')->where('passcord', $resetData->passcord)->delete();
+
+        return response()->json(['message' => 'Password reset successfully']);
     }
 }

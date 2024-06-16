@@ -25,7 +25,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
-Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/forgot-password', [AuthController::class, 'sendEmailVerify']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
