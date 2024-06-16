@@ -25,7 +25,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
-<<<<<<< HEAD
 
 Route::post('/forgot-password', [AuthController::class, 'sendEmailVerify']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
@@ -38,25 +37,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //=================================== Post ======================================
 
-=======
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum'); 
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    // Route::post('/logout', [AuthController::class, 'logout']); 
->>>>>>> origin/master
     Route::post('/add/post', [PostController::class, 'addPost']);
 
     Route::get('/get/post', [PostController::class, 'index']);
 
-    Route::get('/list/post', [PostController::class, 'index']);
+    // Route::get('/list/post', [PostController::class, 'index']);
     Route::get('/show/post/{id}', [PostController::class, 'show']);
     Route::put('update/post/{id}', [PostController::class, 'update']);
     Route::delete('delete/post/{id}', [PostController::class, 'destroy']);
-<<<<<<< HEAD
-=======
-    Route::get('posts/users/{user_id}', [PostController::class, 'showPostsBy']);
->>>>>>> origin/master
 
 
     //================================== Comment =========================================
